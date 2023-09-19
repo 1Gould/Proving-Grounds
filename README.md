@@ -1,2 +1,20 @@
 # Proving-Grounds
-Proving Grounds Practice box write-ups
+
+## Box List
+- [ ] helpdesk
+- [ ] payday
+- [ ] XposedAPI
+- [ ] Exfiltrated
+- [ ] twiggy
+- [ ] clamAV
+- [ ] hetemit
+- [ ] Nukem
+- [ ] Sorcerer
+- [ ] Walla
+- [ ] Pelican
+- [ ] Snookums
+- [ ] Peppo
+- [ ] Postfish
+- [ ] Malbec
+- [ ] Sybaris
+- [ ] Hawat
